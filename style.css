@@ -34,6 +34,7 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
 }
 
 body {
@@ -42,6 +43,7 @@ body {
   color: var(--clr-text);
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 img {
@@ -676,19 +678,25 @@ ul { list-style: none; }
 
 .testimonials .section-title { color: #fff; }
 
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.testimonials-carousel-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.testimonials-track {
+  display: flex;
   gap: 24px;
-  align-items: start;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .testimonial-card {
+  flex-shrink: 0;
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-lg);
   padding: 36px 32px;
-  transition: all var(--transition);
+  transition: background var(--transition), border-color var(--transition), transform var(--transition);
 }
 
 .testimonial-card:hover {
@@ -757,6 +765,65 @@ ul { list-style: none; }
 .testimonial-author span {
   font-size: 0.78rem;
   color: rgba(255,255,255,0.55);
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.carousel-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.carousel-btn:hover:not(:disabled) {
+  background: var(--clr-gold);
+  border-color: var(--clr-gold);
+}
+
+.carousel-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.carousel-dot.active {
+  background: var(--clr-gold);
+  width: 24px;
+  border-radius: 4px;
 }
 
 /* ---------- KONTAKT ---------- */
@@ -1112,6 +1179,8 @@ ul { list-style: none; }
 }
 
 /* ---------- RESPONSIVE ---------- */
+
+/* ---- TABLET ---- */
 @media (max-width: 1024px) {
   :root { --section-py: 72px; }
 
@@ -1125,15 +1194,14 @@ ul { list-style: none; }
 
   .contact-grid { grid-template-columns: 1fr; gap: 48px; }
 
-  .testimonials-grid { grid-template-columns: 1fr; gap: 16px; }
-  .testimonials-grid .testimonial-card:not(.testimonial-card--featured) { display: none; }
-
   .footer-top { grid-template-columns: 1fr; gap: 40px; }
 }
 
+/* ---- MOBILNI ---- */
 @media (max-width: 768px) {
-  :root { --section-py: 56px; }
+  :root { --section-py: 52px; }
 
+  /* NAV */
   .nav-links {
     display: none;
     position: absolute;
@@ -1169,34 +1237,120 @@ ul { list-style: none; }
   .navbar .nav-toggle span { background: rgba(255,255,255,0.9); }
   .navbar.scrolled .nav-toggle span { background: var(--clr-dark); }
 
-  .about-images { height: 320px; }
-  .about-stats { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  /* HERO — isključi parallax, dugmad na punu širinu */
+  .hero-img { transform: none !important; }
 
-  .service-card { flex: 0 0 100%; }
+  .hero-buttons { flex-direction: column; align-items: center; gap: 12px; }
+  .hero-buttons .btn { width: 100%; max-width: 280px; justify-content: center; }
 
+  /* ABOUT — slika relativna, bez accenta, bez parallax-a */
+  .about-images { height: auto; min-height: unset; }
+
+  .about-img-main { position: relative; width: 100%; }
+
+  .about-img-main img {
+    min-height: 280px;
+    transform: none !important;
+  }
+
+  .about-img-accent { display: none; }
+
+  .about-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 24px;
+  }
+
+  .stat-number { font-size: 2rem; }
+  .stat-label { font-size: 0.68rem; }
+
+  /* USLUGE */
+  .service-card { flex: 0 0 100%; padding: 28px 24px; }
+
+  /* GALERIJA */
+  .gallery-wrap { padding: 0 16px; }
   .gallery-preview { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; gap: 8px; }
-  .gallery-expanded { grid-template-columns: repeat(2, 1fr); }
-  .gallery-item--natural { height: 200px; }
+  .gallery-expanded { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .gallery-item--natural { height: 190px; }
 
+  /* TESTIMONIALI */
+  .section-header { margin-bottom: 40px; }
+  .testimonial-card { padding: 24px 20px; }
+  .testimonial-card p { font-size: 0.95rem; }
+  .carousel-btn { width: 40px; height: 40px; font-size: 1.5rem; }
+  .carousel-controls { gap: 16px; margin-top: 32px; }
+
+  /* KONTAKT */
   .form-row { grid-template-columns: 1fr; }
-  .contact-form-wrap { padding: 32px 24px; }
+  .contact-form-wrap { padding: 28px 20px; }
 
+  /* FOOTER */
   .footer-links { grid-template-columns: 1fr 1fr; }
   .footer-links .footer-col:last-child { grid-column: span 2; }
 
+  /* LIGHTBOX */
   .lightbox-prev { left: 8px; }
   .lightbox-next { right: 8px; }
 }
 
+/* ---- MALI TELEFONI (do 480px — tipični iPhone/Android) ---- */
 @media (max-width: 480px) {
-  .hero-buttons { flex-direction: column; align-items: center; }
-  .hero-buttons .btn { width: 100%; max-width: 300px; justify-content: center; }
+  :root { --section-py: 44px; }
 
-  .gallery-grid {
-    grid-template-columns: 1fr;
-    grid-auto-rows: 240px;
-  }
+  .container { padding: 0 16px; }
+  .gallery-wrap { padding: 0 12px; }
 
-  .footer-links { grid-template-columns: 1fr; }
+  /* HERO */
+  .hero-title { font-size: clamp(2.2rem, 9vw, 2.9rem); }
+  .hero-eyebrow { font-size: 0.65rem; letter-spacing: 0.18em; }
+  .hero-sub { font-size: 0.88rem; margin-bottom: 28px; }
+  .hero-scroll { bottom: 24px; }
+  .scroll-line { height: 40px; }
+
+  /* ABOUT */
+  .about-img-main img { min-height: 240px; }
+  .about-stats { gap: 8px; padding-top: 20px; margin-top: 24px; }
+  .stat-number { font-size: 1.8rem; }
+  .stat-label { font-size: 0.62rem; letter-spacing: 0; }
+
+  /* USLUGE */
+  .service-card { padding: 24px 20px; }
+  .service-icon { width: 40px; height: 40px; margin-bottom: 18px; }
+
+  /* GALERIJA */
+  .gallery-preview { grid-auto-rows: 155px; gap: 6px; }
+  .gallery-expanded { gap: 6px; }
+  .gallery-item--natural { height: 160px; }
+  .gallery-toggle { padding: 12px 24px; font-size: 0.75rem; }
+
+  /* TESTIMONIALI */
+  .testimonial-card { padding: 20px 16px; }
+  .testimonial-card p { font-size: 0.9rem; line-height: 1.6; }
+  .author-avatar { width: 36px; height: 36px; font-size: 0.85rem; }
+  .carousel-btn { width: 36px; height: 36px; font-size: 1.3rem; }
+  .carousel-dot { width: 6px; height: 6px; }
+  .carousel-dot.active { width: 18px; }
+
+  /* KONTAKT */
+  .contact-form-wrap { padding: 24px 16px; }
+  /* Sprečava iOS auto-zoom na focus */
+  .form-group input,
+  .form-group select,
+  .form-group textarea { font-size: 16px; }
+
+  /* FOOTER */
+  .footer { padding: 44px 0 0; }
+  .footer-links { grid-template-columns: 1fr; gap: 24px; }
   .footer-links .footer-col:last-child { grid-column: span 1; }
+  .footer-bottom { padding: 20px 0; }
+}
+
+/* ---- VEOMA MALI TELEFONI (do 360px) ---- */
+@media (max-width: 360px) {
+  .hero-title { font-size: 2rem; }
+  .stat-number { font-size: 1.6rem; }
+  .stat-label { font-size: 0.58rem; }
+  .service-card { padding: 20px 16px; }
+  .testimonial-card { padding: 18px 14px; }
 }

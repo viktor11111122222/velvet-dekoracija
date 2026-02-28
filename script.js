@@ -51,9 +51,38 @@ navLinks.querySelectorAll('a').forEach(link => {
   });
 });
 
+// ---------- COUNTER ANIMACIJA (stat-number) ----------
+function animateCounter(el, target, suffix, duration) {
+  const start = performance.now();
+  const update = (now) => {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    // ease-out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target) + suffix;
+    if (progress < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+
+const statNumbers = document.querySelectorAll('.stat-number');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    const raw = el.textContent.trim();
+    const suffix = raw.replace(/[0-9]/g, ''); // "+" ili "%"
+    const target = parseInt(raw, 10);
+    animateCounter(el, target, suffix, 1600);
+    counterObserver.unobserve(el);
+  });
+}, { threshold: 0.5 });
+
+statNumbers.forEach(el => counterObserver.observe(el));
+
 // ---------- SCROLL ANIMACIJE (Intersection Observer) ----------
 const revealEls = document.querySelectorAll(
-  '.about-grid, .service-card, .gallery-item, .testimonial-card, .contact-grid, .stat, .section-header'
+  '.about-grid, .service-card, .gallery-item, .contact-grid, .stat, .section-header'
 );
 
 revealEls.forEach(el => el.classList.add('reveal'));
@@ -222,6 +251,14 @@ lightbox.addEventListener('touchend', (e) => {
   if (Math.abs(diff) > 50) diff > 0 ? showNext() : showPrev();
 }, { passive: true });
 
+// ---------- EMAILJS KONFIGURACIJA ----------
+// Popuni sa svojih EmailJS naloga:
+const EMAILJS_PUBLIC_KEY  = '4FrHcttWWMAg0A32b';   // Account > API Keys
+const EMAILJS_SERVICE_ID  = 'service_jq8bmyh';   // Email Services
+const EMAILJS_TEMPLATE_ID = 'template_301bchb';  // Email Templates
+
+emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
 // ---------- KONTAKT FORMA ----------
 const contactForm = document.getElementById('contactForm');
 
@@ -234,18 +271,36 @@ contactForm.addEventListener('submit', (e) => {
   btn.textContent = 'Slanje...';
   btn.disabled = true;
 
-  // Simulacija slanja (ovdje se može spojiti pravi backend ili EmailJS)
-  setTimeout(() => {
-    btn.textContent = 'Upit poslan!';
-    btn.style.background = '#5a8a5a';
-    contactForm.reset();
+  const templateParams = {
+    name:       contactForm.ime.value,
+    email:      contactForm.email.value,
+    phone:      contactForm.telefon.value,
+    event_type: contactForm.usluga.value,
+    message:    contactForm.poruka.value,
+    time:       new Date().toLocaleString('sr-RS'),
+  };
 
-    setTimeout(() => {
-      btn.textContent = original;
-      btn.style.background = '';
-      btn.disabled = false;
-    }, 3000);
-  }, 1200);
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+    .then(() => {
+      btn.textContent = 'Upit poslan!';
+      btn.style.background = '#5a8a5a';
+      contactForm.reset();
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 3000);
+    })
+    .catch((err) => {
+      console.error('EmailJS greška:', err);
+      btn.textContent = 'Greška — pokušajte ponovo';
+      btn.style.background = '#c0392b';
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 3000);
+    });
 });
 
 // ---------- SMOOTH SCROLL za starije browsere ----------
@@ -258,3 +313,146 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     }
   });
 });
+
+// ---------- TESTIMONIALS CAROUSEL (infinite seamless loop) ----------
+(function () {
+  const track   = document.getElementById('testimonialsTrack');
+  const wrap    = document.getElementById('testimonialsCarousel');
+  const prevBtn = document.getElementById('testimonialsPrev');
+  const nextBtn = document.getElementById('testimonialsNext');
+  const dotsEl  = document.getElementById('carouselDots');
+  if (!track || !wrap) return;
+
+  // Only the original real cards (no clones)
+  const realCards = Array.from(track.querySelectorAll('.testimonial-card'));
+  const REAL      = realCards.length;
+  const GAP       = 24;
+  const DUR       = 580; // slightly longer than CSS 0.55s transition
+
+  let visible   = 3;
+  let current   = 0;   // leftmost real-card index shown (0 .. REAL-visible)
+  let autoTimer = null;
+  let busy      = false;
+
+  function getVisible() {
+    if (window.innerWidth < 640)  return 1;
+    if (window.innerWidth < 1024) return 2;
+    return 3;
+  }
+
+  function getMax() { return REAL - visible; }
+
+  // Real card i lives at extended-track position (i + visible)
+  function extOf(i) { return i + visible; }
+
+  function allCards() {
+    return Array.from(track.querySelectorAll('.testimonial-card'));
+  }
+
+  // Build clone buffer: prepend last `visible` cards, append first `visible` cards
+  function buildClones() {
+    visible = getVisible();
+    track.querySelectorAll('[data-clone]').forEach(c => c.remove());
+
+    // Prepend clones of last `visible` real cards (in order) → positions 0..visible-1
+    const starts = realCards.slice(-visible).map(c => {
+      const cl = c.cloneNode(true); cl.dataset.clone = 's'; return cl;
+    });
+    track.prepend(...starts);
+
+    // Append clones of first `visible` real cards → positions REAL+visible..end
+    realCards.slice(0, visible).forEach(c => {
+      const cl = c.cloneNode(true); cl.dataset.clone = 'e'; track.appendChild(cl);
+    });
+  }
+
+  function setWidths() {
+    const w = (wrap.offsetWidth - GAP * (visible - 1)) / visible;
+    allCards().forEach(c => { c.style.width = w + 'px'; });
+  }
+
+  function moveTo(idx, animate) {
+    const step = allCards()[0].offsetWidth + GAP;
+    if (animate === false) { track.style.transition = 'none'; void track.offsetWidth; }
+    track.style.transform = 'translateX(-' + (idx * step) + 'px)';
+    if (animate === false) { void track.offsetWidth; track.style.transition = ''; }
+  }
+
+  function buildDots() {
+    if (!dotsEl) return;
+    dotsEl.innerHTML = '';
+    for (let i = 0; i <= getMax(); i++) {
+      const d = document.createElement('button');
+      d.className = 'carousel-dot' + (i === current ? ' active' : '');
+      d.setAttribute('aria-label', 'Slajd ' + (i + 1));
+      d.addEventListener('click', () => {
+        if (busy) return;
+        current = i; moveTo(extOf(current), true); syncDots(); resetTimer();
+      });
+      dotsEl.appendChild(d);
+    }
+  }
+
+  function syncDots() {
+    if (!dotsEl) return;
+    Array.from(dotsEl.children).forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  function goNext() {
+    if (busy) return;
+    if (current < getMax()) {
+      current++; moveTo(extOf(current), true); syncDots();
+    } else {
+      // Seamless wrap forward: animate into end-clone zone, snap back to real start
+      busy = true; current = 0; syncDots();
+      moveTo(extOf(REAL), true);
+      setTimeout(() => { moveTo(extOf(0), false); busy = false; }, DUR);
+    }
+  }
+
+  function goPrev() {
+    if (busy) return;
+    if (current > 0) {
+      current--; moveTo(extOf(current), true); syncDots();
+    } else {
+      // Seamless wrap backward: animate into start-clone zone, snap to real end
+      busy = true; current = getMax(); syncDots();
+      moveTo(extOf(-visible), true);   // extOf(-visible) = 0 = start of start-clones
+      setTimeout(() => { moveTo(extOf(current), false); busy = false; }, DUR);
+    }
+  }
+
+  function startTimer() { autoTimer = setInterval(goNext, 5000); }
+  function resetTimer() { clearInterval(autoTimer); startTimer(); }
+
+  if (prevBtn) prevBtn.addEventListener('click', () => { goPrev(); resetTimer(); });
+  if (nextBtn) nextBtn.addEventListener('click', () => { goNext(); resetTimer(); });
+
+  wrap.addEventListener('mouseenter', () => clearInterval(autoTimer));
+  wrap.addEventListener('mouseleave', startTimer);
+
+  let swipeX = 0;
+  wrap.addEventListener('touchstart', e => { swipeX = e.touches[0].clientX; }, { passive: true });
+  wrap.addEventListener('touchend', e => {
+    const dx = swipeX - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 50) { dx > 0 ? goNext() : goPrev(); resetTimer(); }
+  }, { passive: true });
+
+  let resizeId;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeId);
+    resizeId = setTimeout(() => {
+      const prev = current;
+      buildClones(); setWidths(); buildDots();
+      current = Math.min(prev, getMax());
+      moveTo(extOf(current), false);
+    }, 150);
+  });
+
+  // Init
+  buildClones();
+  setWidths();
+  buildDots();
+  moveTo(extOf(0), false);
+  startTimer();
+})();
