@@ -186,6 +186,21 @@ ul { list-style: none; }
   transform: translateY(0);
 }
 
+/* Mobilni meni otvoren — ceo navbar dobija belu pozadinu odmah */
+.navbar.nav-open::before {
+  opacity: 1;
+  transform: translateY(0);
+  transition: none;
+}
+
+/* Zatvaranje — pozadina nestaje odmah, bez fade-out */
+.navbar.nav-closing::before {
+  transition: none;
+}
+
+.navbar.nav-open .nav-brand { color: var(--clr-dark); }
+.navbar.nav-open .nav-toggle span { background: var(--clr-dark); }
+
 .nav-container {
   max-width: var(--container);
   margin: 0 auto;

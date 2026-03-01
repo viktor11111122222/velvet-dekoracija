@@ -39,16 +39,26 @@ onScroll();
 const navToggle = document.getElementById('navToggle');
 const navLinks  = document.getElementById('navLinks');
 
+function closeNav() {
+  navLinks.classList.remove('open');
+  navbar.classList.add('nav-closing');
+  navbar.classList.remove('nav-open');
+  requestAnimationFrame(() => navbar.classList.remove('nav-closing'));
+}
+
 navToggle.addEventListener('click', () => {
-  navLinks.classList.toggle('open');
-  navToggle.setAttribute('aria-expanded', navLinks.classList.contains('open'));
+  const isOpen = navLinks.classList.toggle('open');
+  navToggle.setAttribute('aria-expanded', isOpen);
+  if (isOpen) {
+    navbar.classList.add('nav-open');
+  } else {
+    closeNav();
+  }
 });
 
 // Zatvori meni klikom na link
 navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    navLinks.classList.remove('open');
-  });
+  link.addEventListener('click', closeNav);
 });
 
 // ---------- COUNTER ANIMACIJA (stat-number) ----------
