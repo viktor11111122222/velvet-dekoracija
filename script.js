@@ -101,13 +101,10 @@ const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        // Staggered delay za grid elemente
         const siblings = Array.from(entry.target.parentElement.children);
         const index = siblings.indexOf(entry.target);
         const delay = Math.min(index * 80, 400);
-        setTimeout(() => {
-          entry.target.classList.add('visible');
-        }, delay);
+        setTimeout(() => entry.target.classList.add('visible'), delay);
         observer.unobserve(entry.target);
       }
     });
@@ -116,6 +113,40 @@ const observer = new IntersectionObserver(
 );
 
 revealEls.forEach(el => observer.observe(el));
+
+// Slide-in za sve tekst elemente u sekcijama
+const slideEls = document.querySelectorAll(
+  'section:not(.hero) h2, section:not(.hero) h3, section:not(.hero) h4,' +
+  'section:not(.hero) p, section:not(.hero) li,' +
+  'section:not(.hero) .section-eyebrow,' +
+  'section:not(.hero) .btn,' +
+  '.footer-col h4, .footer-col p, .footer-col li'
+);
+
+let slideIdx = 0;
+slideEls.forEach(el => {
+  if (el.closest('.testimonial-card') && el.closest('[data-clone]')) return;
+  el.classList.add('slide-in', slideIdx % 2 === 0 ? 'from-left' : 'from-right');
+  slideIdx++;
+});
+
+const slideObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const siblings = Array.from(entry.target.parentElement.children)
+          .filter(c => c.classList.contains('slide-in'));
+        const index = siblings.indexOf(entry.target);
+        const delay = Math.min(index * 60, 300);
+        setTimeout(() => entry.target.classList.add('visible'), delay);
+        slideObserver.unobserve(entry.target);
+      }
+    });
+  },
+  { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+);
+
+slideEls.forEach(el => slideObserver.observe(el));
 
 // ---------- GALERIJA TOGGLE ----------
 const galleryExpanded = document.getElementById('galleryExpanded');
@@ -311,6 +342,63 @@ contactForm.addEventListener('submit', (e) => {
         btn.disabled = false;
       }, 3000);
     });
+});
+
+// ---------- KOPIRAJ BROJ TELEFONA ----------
+const copyToast = document.getElementById('copyToast');
+let toastTimer = null;
+
+async function copyPhone(phone, feedbackEl) {
+  try {
+    await navigator.clipboard.writeText(phone);
+  } catch { return; }
+
+  // Toast (vidljiv i na desktopu i na mobilnom)
+  clearTimeout(toastTimer);
+  copyToast.classList.add('show');
+  toastTimer = setTimeout(() => copyToast.classList.remove('show'), 2000);
+
+  // Feedback na desktop dugmetu
+  if (feedbackEl) {
+    const label = feedbackEl.querySelector('.copy-label');
+    feedbackEl.classList.add('copied');
+    label.textContent = 'Kopirano!';
+    setTimeout(() => {
+      feedbackEl.classList.remove('copied');
+      label.textContent = 'Kopiraj';
+    }, 2000);
+  }
+}
+
+// Desktop: dugme za kopiranje
+document.querySelectorAll('.copy-phone-btn').forEach(btn => {
+  btn.addEventListener('click', () => copyPhone(btn.dataset.phone, btn));
+});
+
+// Mobilni: klik na broj kopira umesto da poziva
+document.querySelectorAll('.phone-number').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+    if (isTouchDevice) {
+      e.preventDefault();
+      copyPhone(link.textContent.trim(), null);
+    }
+  });
+});
+
+// Email: klik kopira adresu
+document.querySelectorAll('.email-copy').forEach(link => {
+  link.addEventListener('click', async (e) => {
+    e.preventDefault();
+    await copyPhone(link.dataset.email, null);
+    copyToast.textContent = 'Email kopiran!';
+    clearTimeout(toastTimer);
+    copyToast.classList.add('show');
+    toastTimer = setTimeout(() => {
+      copyToast.classList.remove('show');
+      copyToast.textContent = 'Broj kopiran!';
+    }, 2000);
+  });
 });
 
 // ---------- SMOOTH SCROLL za starije browsere ----------

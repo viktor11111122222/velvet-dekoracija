@@ -368,7 +368,16 @@
               </svg>
               <div>
                 <strong>Telefon</strong>
-                <a href="tel:0603074392">060 307 4392</a>
+                <span class="phone-wrap">
+                  <a href="tel:0603074392" class="phone-number">060 307 4392</a>
+                  <button class="copy-phone-btn" data-phone="060 307 4392" aria-label="Kopiraj broj telefona">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                      <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                    </svg>
+                    <span class="copy-label">Kopiraj</span>
+                  </button>
+                </span>
               </div>
             </div>
             <div class="contact-item">
@@ -378,7 +387,14 @@
               </svg>
               <div>
                 <strong>E-mail</strong>
-                <a href="mailto:Mmarija83@Gmail.com">Mmarija83@Gmail.com</a>
+                <a class="email-copy" href="#" data-email="Mmarija83@Gmail.com">Mmarija83@Gmail.com</a>
+                <a href="mailto:Mmarija83@Gmail.com" class="open-email-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  Pošalji email
+                </a>
               </div>
             </div>
             <div class="contact-item">
@@ -502,6 +518,8 @@
     </div>
     <button class="lightbox-next" id="lightboxNext" aria-label="Sledeće">&#8250;</button>
   </div>
+
+  <div class="copy-toast" id="copyToast">Broj kopiran!</div>
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="script.js"></script>

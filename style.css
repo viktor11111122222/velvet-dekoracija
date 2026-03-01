@@ -339,6 +339,11 @@ ul { list-style: none; }
   );
 }
 
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-52px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 .hero-content {
   position: relative;
   z-index: 2;
@@ -354,6 +359,7 @@ ul { list-style: none; }
   text-transform: uppercase;
   color: var(--clr-gold-lt);
   margin-bottom: 20px;
+  animation: slideFromLeft 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
 }
 
 .hero-title {
@@ -363,6 +369,7 @@ ul { list-style: none; }
   line-height: 1.1;
   margin-bottom: 24px;
   color: #fff;
+  animation: slideFromLeft 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.45s both;
 }
 
 .hero-title em {
@@ -376,6 +383,7 @@ ul { list-style: none; }
   max-width: 500px;
   margin: 0 auto 40px;
   line-height: 1.8;
+  animation: slideFromLeft 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s both;
 }
 
 .hero-buttons {
@@ -383,6 +391,7 @@ ul { list-style: none; }
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
+  animation: slideFromLeft 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.95s both;
 }
 
 .hero-scroll {
@@ -898,6 +907,103 @@ ul { list-style: none; }
 
 .contact-item a:hover { color: var(--clr-gold); }
 
+.phone-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.copy-phone-btn {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--clr-line);
+  border-radius: 6px;
+  padding: 3px 8px;
+  cursor: pointer;
+  color: var(--clr-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+  line-height: 1;
+}
+
+.copy-phone-btn:hover {
+  border-color: var(--clr-gold);
+  color: var(--clr-gold);
+}
+
+.copy-phone-btn.copied {
+  border-color: #5a8a5a;
+  color: #5a8a5a;
+}
+
+/* Email: klikabilni tekst koji kopira */
+.email-copy {
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-style: dashed;
+  text-decoration-color: var(--clr-muted);
+}
+
+.email-copy:hover {
+  color: var(--clr-gold);
+  text-decoration-color: var(--clr-gold);
+}
+
+/* Dugme za otvaranje email klijenta */
+.open-email-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  background: transparent;
+  border: 1px solid var(--clr-line);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--clr-muted);
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.open-email-btn:hover {
+  border-color: var(--clr-gold);
+  color: var(--clr-gold);
+}
+
+/* Desktop: prikaži dugme za kopiranje */
+@media (hover: hover) and (pointer: fine) {
+  .copy-phone-btn { display: flex; }
+}
+
+/* Toast obaveštenje */
+.copy-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--clr-dark);
+  color: #fff;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  padding: 10px 20px;
+  border-radius: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 9999;
+  white-space: nowrap;
+}
+
+.copy-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 .social-links {
   display: flex;
   gap: 12px;
@@ -1193,6 +1299,20 @@ ul { list-style: none; }
   transform: translateY(0);
 }
 
+.slide-in {
+  opacity: 0;
+  transition: opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.slide-in.from-left  { transform: translateX(-48px); }
+.slide-in.from-right { transform: translateX(48px); }
+
+.slide-in.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 /* ---------- RESPONSIVE ---------- */
 
 /* ---- TABLET ---- */
@@ -1234,12 +1354,10 @@ ul { list-style: none; }
 
   .nav-links a {
     color: var(--clr-text) !important;
-    padding: 14px 24px;
-    border-bottom: 1px solid var(--clr-line);
+    padding: 13px 24px;
+    border-bottom: none;
     width: 100%;
   }
-
-  .nav-links li:last-child a { border-bottom: none; }
 
   .nav-cta {
     border: none !important;
