@@ -850,6 +850,100 @@ ul { list-style: none; }
   border-radius: 4px;
 }
 
+/* ---------- CTA STRIP ---------- */
+.cta-strip {
+  background: var(--clr-cream);
+  padding: 52px 0;
+  text-align: center;
+}
+
+.cta-strip__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 1.5rem;
+}
+
+.cta-strip__line {
+  flex: 1;
+  max-width: 80px;
+  height: 1px;
+  background: var(--clr-gold);
+  opacity: 0.5;
+}
+
+.cta-strip__ornament {
+  font-size: 1rem;
+  color: var(--clr-gold);
+  opacity: 0.7;
+  letter-spacing: 0.3em;
+}
+
+.cta-strip__text {
+  font-family: var(--ff-serif);
+  font-size: clamp(1.25rem, 2.5vw, 1.9rem);
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--clr-dark);
+  margin-bottom: 1.75rem;
+}
+
+.cta-strip__text em {
+  font-style: italic;
+  color: var(--clr-gold);
+}
+
+/* ---------- BENEFITS LISTA ---------- */
+.contact-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #e8e0d6;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: #fff;
+  border-bottom: 1px solid #f0ebe4;
+}
+
+.benefit-item:last-child { border-bottom: none; }
+
+.benefit-item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--clr-gold);
+}
+
+.benefit-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.benefit-item strong {
+  font-family: var(--ff-sans, 'Montserrat', sans-serif);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--clr-dark);
+}
+
+.benefit-item span {
+  font-size: 0.82rem;
+  color: #888;
+}
+
+
 /* ---------- KONTAKT ---------- */
 .contact {
   padding: var(--section-py) 0;
@@ -860,7 +954,7 @@ ul { list-style: none; }
   display: grid;
   grid-template-columns: 1fr 1.2fr;
   gap: 80px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .contact-info p {
@@ -975,6 +1069,10 @@ ul { list-style: none; }
   color: var(--clr-gold);
 }
 
+.spasing-btn {
+  margin-inline: 5px;
+}
+
 /* Desktop: prikaži dugme za kopiranje */
 @media (hover: hover) and (pointer: fine) {
   .copy-phone-btn { display: flex; }
@@ -1039,12 +1137,15 @@ ul { list-style: none; }
   padding: 48px 40px;
   border: 1px solid var(--clr-line);
   box-shadow: 0 4px 40px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
 }
 
 .contact-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  flex: 1;
 }
 
 .form-row {
@@ -1067,6 +1168,8 @@ ul { list-style: none; }
   color: var(--clr-muted);
 }
 
+.form-group:has(textarea) { flex: 1; }
+
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -1088,6 +1191,13 @@ ul { list-style: none; }
 .form-group textarea:focus {
   border-color: var(--clr-gold);
   box-shadow: 0 0 0 3px rgba(178,145,81,0.12);
+}
+
+.form-group:has(textarea) textarea {
+  flex: 1;
+  resize: none;
+  height: 100%;
+  min-height: 120px;
 }
 
 .form-group input::placeholder,
