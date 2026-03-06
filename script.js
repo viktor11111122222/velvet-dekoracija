@@ -15,6 +15,7 @@
     const elapsed = Date.now() - start;
     const delay = Math.max(0, MIN_SHOW - elapsed);
     setTimeout(function () {
+      document.body.style.overflow = '';
       loader.classList.add('hidden');
       // Ukloni iz DOM-a posle animacije
       loader.addEventListener('transitionend', function () {
