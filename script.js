@@ -7,22 +7,27 @@
   const loader = document.getElementById('loader');
   if (!loader) return;
 
-  // Minimum vreme prikaza (ms) da loading ne trepne
-  const MIN_SHOW = 1200;
+  const MIN_SHOW = 800;
+  const MAX_SHOW = 2000;
   const start = Date.now();
+  let hidden = false;
 
   function hideLoader() {
+    if (hidden) return;
+    hidden = true;
     const elapsed = Date.now() - start;
     const delay = Math.max(0, MIN_SHOW - elapsed);
     setTimeout(function () {
       document.body.style.overflow = '';
       loader.classList.add('hidden');
-      // Ukloni iz DOM-a posle animacije
       loader.addEventListener('transitionend', function () {
         loader.remove();
       }, { once: true });
     }, delay);
   }
+
+  // Tvrdi maksimum — loader se uvijek sakrije nakon 2s
+  setTimeout(hideLoader, MAX_SHOW);
 
   if (document.readyState === 'complete') {
     hideLoader();

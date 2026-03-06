@@ -1712,9 +1712,26 @@ ul { list-style: none; }
 }
 
 /* Mobile */
+@media (max-width: 768px) {
+  .loader {
+    height: 100dvh;
+    height: -webkit-fill-available;
+  }
+  .loader-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
+  .loader-ring-wrap { width: 170px; height: 170px; }
+  .loader-ring-text { font-size: 9.5px; letter-spacing: 2px; }
+  .loader-logo-wrap { width: 80px; height: 80px; }
+  .loader-logo { width: 54px; }
+}
+
 @media (max-width: 480px) {
-  .loader-ring-wrap { width: 160px; height: 160px; }
-  .loader-ring-text { font-size: 9px; letter-spacing: 2px; }
-  .loader-logo-wrap { width: 72px; height: 72px; }
+  .loader-ring-wrap { width: 150px; height: 150px; }
+  .loader-ring-text { font-size: 8.5px; letter-spacing: 1.8px; }
+  .loader-logo-wrap { width: 66px; height: 66px; }
   .loader-logo { width: 46px; }
 }
