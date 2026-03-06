@@ -4,12 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Velvet Dekoracije — Dekoracije za slavlja</title>
+
+  <!-- FAVICON — svi pretraživači -->
+  <link rel="icon" type="image/png" sizes="512x512" href="pblc/favicon-round.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="pblc/favicon-round.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="pblc/favicon-round.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="pblc/favicon-round.png">
+  <meta name="msapplication-TileImage" content="pblc/favicon-round.png">
+  <meta name="msapplication-TileColor" content="#1a1510">
+  <meta name="theme-color" content="#1a1510">
+
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+
+  <!-- LOADING SCREEN -->
+  <div class="loader" id="loader">
+    <div class="loader-bg">
+      <img src="public/Q58A0659.JPG" alt="" class="loader-bg-img">
+      <div class="loader-bg-overlay"></div>
+    </div>
+    <div class="loader-center">
+      <div class="loader-ring-wrap">
+        <svg class="loader-ring-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <path id="textCircle" d="M 100,100 m -72,0 a 72,72 0 1,1 144,0 a 72,72 0 1,1 -144,0"/>
+          </defs>
+          <text class="loader-ring-text">
+            <textPath href="#textCircle" startOffset="0%">
+              ✦ VELVET DEKORACIJE ✦ NIŠA NAJLEPŠA SLAVLJA ✦
+            </textPath>
+          </text>
+        </svg>
+        <div class="loader-logo-wrap">
+          <img src="pblc/logo.png" alt="Velvet" class="loader-logo">
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- NAVIGACIJA -->
   <nav class="navbar" id="navbar">

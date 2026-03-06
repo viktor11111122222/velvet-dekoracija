@@ -2,6 +2,34 @@
    VELVET DEKORACIJE — Skripte
    ============================================================ */
 
+// ---------- LOADING SCREEN ----------
+(function () {
+  const loader = document.getElementById('loader');
+  if (!loader) return;
+
+  // Minimum vreme prikaza (ms) da loading ne trepne
+  const MIN_SHOW = 1200;
+  const start = Date.now();
+
+  function hideLoader() {
+    const elapsed = Date.now() - start;
+    const delay = Math.max(0, MIN_SHOW - elapsed);
+    setTimeout(function () {
+      loader.classList.add('hidden');
+      // Ukloni iz DOM-a posle animacije
+      loader.addEventListener('transitionend', function () {
+        loader.remove();
+      }, { once: true });
+    }, delay);
+  }
+
+  if (document.readyState === 'complete') {
+    hideLoader();
+  } else {
+    window.addEventListener('load', hideLoader);
+  }
+})();
+
 // ---------- NAVIGACIJA: scroll klasa ----------
 const navbar = document.getElementById('navbar');
 
