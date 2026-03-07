@@ -2,6 +2,10 @@
    VELVET DEKORACIJE — Skripte
    ============================================================ */
 
+// ---------- SCROLL NA VRH PRI REFRESHU ----------
+if (history.scrollRestoration) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
 // ---------- LOADING SCREEN ----------
 (function () {
   const loader = document.getElementById('loader');
@@ -264,8 +268,28 @@ function showImage(index) {
   }, 150);
 }
 
+let _scrollY = 0;
+
+function lockScroll() {
+  _scrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${_scrollY}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.overflow = 'hidden';
+}
+
+function unlockScroll() {
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.overflow = '';
+  window.scrollTo(0, _scrollY);
+}
+
 function openLightbox(index) {
-  buildImageList(); // osvježi listu (expanded može biti otvoren)
+  buildImageList();
   currentIndex = index;
   lightboxImg.alt = images[index].alt;
   lightboxImg.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
@@ -273,7 +297,7 @@ function openLightbox(index) {
   lightboxImg.style.transform = 'scale(1)';
   updateCounter();
   lightbox.classList.add('active');
-  document.body.style.overflow = 'hidden';
+  lockScroll();
   toJpeg(images[index].src, (jpegSrc) => {
     lightboxImg.src = jpegSrc;
   });
@@ -281,7 +305,7 @@ function openLightbox(index) {
 
 function closeLightbox() {
   lightbox.classList.remove('active');
-  document.body.style.overflow = '';
+  unlockScroll();
 }
 
 function showPrev() {

@@ -1291,6 +1291,8 @@ ul { list-style: none; }
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 16px;
+  padding: 60px 20px 20px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1304,7 +1306,8 @@ ul { list-style: none; }
 /* Slika se skalira pri otvaranju */
 .lightbox-content {
   position: relative;
-  width: 90vw;
+  flex: 1;
+  min-width: 0;
   height: 85vh;
   display: flex;
   align-items: center;
@@ -1374,8 +1377,8 @@ ul { list-style: none; }
 
 .lightbox-prev,
 .lightbox-next {
-  top: 50%;
-  transform: translateY(-50%);
+  position: static;
+  flex-shrink: 0;
   width: 52px;
   height: 52px;
   border-radius: 50%;
@@ -1383,19 +1386,15 @@ ul { list-style: none; }
   font-weight: 300;
 }
 
-.lightbox-prev { left: 20px; }
-.lightbox-next { right: 20px; }
-
 .lightbox-close:hover,
 .lightbox-prev:hover,
 .lightbox-next:hover {
   background: var(--clr-gold);
   border-color: var(--clr-gold);
-  transform: translateY(0) scale(1.05);
 }
 
-.lightbox-prev:hover { transform: translateY(-50%) scale(1.05); }
-.lightbox-next:hover { transform: translateY(-50%) scale(1.05); }
+.lightbox-prev:hover,
+.lightbox-next:hover { transform: scale(1.05); }
 
 /* ---------- ANIMACIJE ULASKA ---------- */
 .reveal {
@@ -1533,8 +1532,9 @@ ul { list-style: none; }
   .footer-links .footer-col:last-child { grid-column: span 2; }
 
   /* LIGHTBOX */
-  .lightbox-prev { left: 8px; }
-  .lightbox-next { right: 8px; }
+  .lightbox { gap: 8px; padding: 56px 8px 16px; }
+  .lightbox-prev,
+  .lightbox-next { width: 40px; height: 40px; font-size: 1.4rem; }
 }
 
 /* ---- MALI TELEFONI (do 480px — tipični iPhone/Android) ---- */
@@ -1726,12 +1726,12 @@ ul { list-style: none; }
   .loader-ring-wrap { width: 170px; height: 170px; }
   .loader-ring-text { font-size: 9.5px; letter-spacing: 2px; }
   .loader-logo-wrap { width: 80px; height: 80px; }
-  .loader-logo { width: 54px; }
+  .loader-logo { width: 54px; height: 54px; }
 }
 
 @media (max-width: 480px) {
   .loader-ring-wrap { width: 150px; height: 150px; }
   .loader-ring-text { font-size: 8.5px; letter-spacing: 1.8px; }
   .loader-logo-wrap { width: 66px; height: 66px; }
-  .loader-logo { width: 46px; }
+  .loader-logo { width: 46px; height: 46px; }
 }
