@@ -1535,10 +1535,6 @@ ul { list-style: none; }
   transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.service-card-expandable.expanded {
-  /* max-height managed by JS for smooth animation */
-}
-
 .service-card-expand-btn {
   display: flex;
   align-items: center;
