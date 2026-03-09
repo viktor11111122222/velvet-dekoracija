@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../Downloads/1.rođ"
+		},
+		{
+			"path": "../Downloads/18ti"
+		},
+		{
+			"path": "../Downloads/Devojačko"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "velvet-dekoracija"
+	}
+}

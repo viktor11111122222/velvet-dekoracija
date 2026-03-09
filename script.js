@@ -73,6 +73,41 @@ function onScroll() {
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
+// ---------- AKTIVNI NAV LINK ----------
+(function () {
+  const sections = ['home', 'o-nama', 'usluge', 'galerija', 'kontakt']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+  const navLinks = Array.from(document.querySelectorAll('.nav-links a[href^="#"]'));
+
+  function setActive(id) {
+    navLinks.forEach(a => {
+      const href = a.getAttribute('href').slice(1); // ukloni #
+      a.classList.toggle('nav-active', href === id);
+    });
+  }
+
+  const sectionObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActive(entry.target.id);
+        }
+      });
+    },
+    {
+      threshold: 0,
+      rootMargin: '-40% 0px -55% 0px' // aktivira se kad centar sekcije prođe sredinom ekrana
+    }
+  );
+
+  sections.forEach(s => sectionObserver.observe(s));
+
+  // Početno postavi 'home' ako smo na vrhu
+  setActive('home');
+})();
+
 // ---------- MOBILNI MENI ----------
 const navToggle = document.getElementById('navToggle');
 const navLinks  = document.getElementById('navLinks');
@@ -876,6 +911,43 @@ document.addEventListener('keydown', (e) => {
 
 document.querySelectorAll('.service-card[data-gallery]').forEach(card => {
   card.addEventListener('click', () => openSvcGallery(card.dataset.gallery));
+});
+
+const COLLAPSED_REM = 6.1;
+
+function getCollapsedPx() {
+  return COLLAPSED_REM * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+
+document.querySelectorAll('.service-card-expand-btn').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const p = btn.previousElementSibling;
+    const isExpanded = p.classList.contains('expanded');
+
+    if (isExpanded) {
+      // 1. Disable transition, lock at current full height
+      p.style.transition = 'none';
+      p.style.maxHeight = p.scrollHeight + 'px';
+      void p.offsetHeight; // force reflow
+      // 2. Re-enable transition and animate to collapsed
+      p.style.transition = '';
+      p.style.maxHeight = getCollapsedPx() + 'px';
+      p.classList.remove('expanded');
+      btn.classList.remove('open');
+    } else {
+      const targetH = p.scrollHeight;
+      // 1. Disable transition, lock at collapsed height
+      p.style.transition = 'none';
+      p.style.maxHeight = getCollapsedPx() + 'px';
+      void p.offsetHeight; // force reflow
+      // 2. Re-enable transition and animate to full height
+      p.style.transition = '';
+      p.style.maxHeight = targetH + 'px';
+      p.classList.add('expanded');
+      btn.classList.add('open');
+    }
+  });
 });
 
 // ---------- GENERISANJE GALERIJE IZ POPUP SLIKA ----------

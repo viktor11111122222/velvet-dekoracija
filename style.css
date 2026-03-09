@@ -261,6 +261,57 @@ ul { list-style: none; }
 
 .navbar.scrolled .nav-links a:hover { color: var(--clr-gold); }
 
+/* Svaki nav link ima ::after — sakrivenu liniju koja se puni */
+.nav-links a {
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  width: 100%;
+  height: 1px;
+  background: var(--clr-gold);
+  border-radius: 1px;
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.4s ease;
+  opacity: 0;
+}
+
+.nav-links a.nav-active {
+  color: var(--clr-gold);
+}
+
+.nav-links a.nav-active::after {
+  transform: translateX(-50%) scaleX(0.7);
+  opacity: 1;
+}
+
+/* Na prozirnom navbaru (hero zona) */
+.navbar:not(.scrolled) .nav-links a::after {
+  background: var(--clr-gold-lt);
+}
+
+.navbar:not(.scrolled) .nav-links a.nav-active {
+  color: var(--clr-gold-lt);
+}
+
+/* Hover — linija se pojavljuje tanja/kraća */
+.navbar.scrolled .nav-links a:hover:not(.nav-active)::after {
+  transform: translateX(-50%) scaleX(0.4);
+  opacity: 0.35;
+}
+
+/* Kontakt dugme (nav-cta) nema liniju */
+.nav-links .nav-cta::after,
+.nav-links .nav-cta.nav-active::after {
+  display: none;
+}
+
 .nav-cta {
   padding: 10px 24px;
   border: 1px solid rgba(255,255,255,0.5);
@@ -514,6 +565,7 @@ ul { list-style: none; }
   flex-wrap: wrap;
   gap: 24px;
   justify-content: center;
+  align-items: flex-start;
 }
 
 .service-card {
@@ -1475,6 +1527,50 @@ ul { list-style: none; }
 .service-card[data-gallery]:hover .service-card-cta {
   opacity: 1;
   transform: translateY(0);
+}
+
+.service-card-expandable {
+  max-height: 6.1rem; /* ~4 lines at 0.88rem × 1.7 line-height */
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card-expandable.expanded {
+  /* max-height managed by JS for smooth animation */
+}
+
+.service-card-expand-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--clr-line);
+  border-radius: 50%;
+  color: var(--clr-gold);
+  cursor: pointer;
+  padding: 0;
+  margin-top: 12px;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.service-card-expand-btn:hover {
+  border-color: var(--clr-gold);
+  background: rgba(178, 145, 81, 0.07);
+}
+
+.expand-chevron {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+  flex-shrink: 0;
+}
+
+.service-card-expand-btn.open .expand-chevron {
+  transform: rotate(180deg);
 }
 
 .svc-gallery {
