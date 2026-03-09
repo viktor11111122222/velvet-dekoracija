@@ -51,6 +51,7 @@ img {
   max-width: 100%;
   height: 100%;
   object-fit: cover;
+  image-orientation: from-image;
 }
 
 a {
@@ -570,35 +571,78 @@ ul { list-style: none; }
   padding: 0 24px;
   max-width: 1400px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
 
-/* PRVI RED — 4 uniformne slike, isti crop */
+/* PRVI RED — slike su direktno u parent gridu */
 .gallery-preview {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 300px;
-  gap: 12px;
+  display: contents;
 }
 
-/* OSTATAK — grid, cela slika vidljiva */
+/* OSTATAK — subgrid nasleđuje kolone od parent-a */
 .gallery-expanded {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(4, 1fr); /* fallback */
+  grid-template-columns: subgrid;
+  row-gap: 12px;
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition:
-    max-height 0.9s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.5s ease 0.1s;
+  transition: opacity 0.6s ease;
 }
 
 .gallery-expanded.open {
-  max-height: 3000px;
+  max-height: 9000px;
   opacity: 1;
+}
+
+/* Gallery loading overlay */
+.gallery-load-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 21, 16, 0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.gallery-load-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.gallery-load-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.gallery-load-ring {
+  width: 56px;
+  height: 56px;
+  border: 3px solid rgba(178, 145, 81, 0.25);
+  border-top-color: var(--clr-gold);
+  border-radius: 50%;
+  animation: gallerySpin 0.85s linear infinite;
+}
+
+.gallery-load-text {
+  color: var(--clr-gold-lt);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 /* Dugme ispod galerije */
@@ -642,33 +686,49 @@ ul { list-style: none; }
   transform: rotate(180deg);
 }
 
+.gallery-toggle.loading {
+  opacity: 0.85;
+  cursor: wait;
+}
+
+.gallery-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: gallerySpin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes gallerySpin {
+  to { transform: rotate(360deg); }
+}
+
 .gallery-item {
   position: relative;
   overflow: hidden;
   border-radius: var(--radius);
   cursor: pointer;
   background: var(--clr-line);
+  aspect-ratio: 4/3;
+  display: block;
 }
 
 .gallery-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   transition: transform 0.5s ease;
+  image-orientation: from-image;
 }
 
-.gallery-item:hover img { transform: scale(1.06); }
+.gallery-item:hover img { transform: scale(1.04); }
 
-/* Prirodni format — cela slika vidljiva, bez praznina */
+/* gallery-item--natural je sada isto kao obično gallery-item */
 .gallery-item--natural {
-  height: 280px;
-  background: var(--clr-bg);
-}
-
-.gallery-item--natural img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  background: transparent;
 }
 
 .gallery-overlay {
@@ -1334,6 +1394,7 @@ ul { list-style: none; }
   box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
   display: block;
   background: transparent;
+  image-orientation: from-image;
 }
 
 /* Counter "2 / 12" */
@@ -1396,6 +1457,218 @@ ul { list-style: none; }
 .lightbox-prev:hover,
 .lightbox-next:hover { transform: scale(1.05); }
 
+/* ---------- SERVICE GALLERY POPUP ---------- */
+.service-card[data-gallery] { cursor: pointer; }
+
+.service-card-cta {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--clr-gold);
+  margin-top: 0.9rem;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.service-card[data-gallery]:hover .service-card-cta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.svc-gallery {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(8, 5, 2, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(4px);
+}
+
+.svc-gallery.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.svc-gallery-inner {
+  background: var(--clr-dark, #1a1510);
+  border: 1px solid rgba(196, 160, 80, 0.15);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 920px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.94) translateY(16px);
+  opacity: 0;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.35s ease;
+}
+
+.svc-gallery.active .svc-gallery-inner {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.svc-gallery-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(196, 160, 80, 0.12);
+  flex-shrink: 0;
+}
+
+.svc-gallery-title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--clr-light, #f5f0e8);
+  margin: 0;
+}
+
+.svc-gallery-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.svc-gallery-close:hover {
+  background: var(--clr-gold);
+  border-color: var(--clr-gold);
+}
+
+.svc-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+  align-items: start;
+  scrollbar-width: thin;
+  scrollbar-color: var(--clr-gold) rgba(255, 255, 255, 0.05);
+}
+
+.svc-gallery-grid::-webkit-scrollbar {
+  width: 5px;
+}
+
+.svc-gallery-grid::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.svc-gallery-grid::-webkit-scrollbar-thumb {
+  background: var(--clr-gold);
+  border-radius: 3px;
+}
+
+.svc-gallery-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--clr-gold-lt);
+}
+
+.svc-gallery-item {
+  overflow: hidden;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  padding-bottom: 75%; /* 4:3 ratio */
+  height: 0;
+}
+
+.svc-gallery-item img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+  image-orientation: from-image;
+}
+
+.svc-gallery-item:hover img { transform: scale(1.07); }
+
+.svc-gallery-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(196, 160, 80, 0.12);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.svc-gallery-item:hover::after { opacity: 1; }
+
+/* ---------- SCROLL HINT ---------- */
+.scroll-hint {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 12px;
+  background: linear-gradient(to bottom, transparent, rgba(26, 21, 16, 0.92));
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.scroll-hint.hidden {
+  opacity: 0;
+}
+
+.scroll-hint-chevron {
+  font-size: 1.4rem;
+  color: var(--clr-gold-lt);
+  line-height: 1;
+  animation: hintBounce 1.6s ease-in-out infinite;
+}
+
+.scroll-hint-text {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+
+@keyframes hintBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(4px); }
+}
+
+@media (max-width: 600px) {
+  .svc-gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .svc-gallery-title { font-size: 1.1rem; }
+  .svc-gallery-inner { max-height: 92vh; }
+}
+
 /* ---------- ANIMACIJE ULASKA ---------- */
 .reveal {
   opacity: 0;
@@ -1417,10 +1690,15 @@ ul { list-style: none; }
 .slide-in.from-left  { transform: translateX(-48px); }
 .slide-in.from-right { transform: translateX(48px); }
 
+.gallery-item.slide-in.from-left  { transform: translateX(-32px); }
+.gallery-item.slide-in.from-right { transform: translateX(32px); }
+
 .slide-in.visible {
   opacity: 1;
   transform: translateX(0);
 }
+
+.gallery-item.slide-in.visible { transform: translateX(0); }
 
 /* ---------- RESPONSIVE ---------- */
 
@@ -1433,8 +1711,8 @@ ul { list-style: none; }
 
   .service-card { flex: 0 0 calc(50% - 12px); }
 
-  .gallery-preview { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 220px; }
-  .gallery-expanded { grid-template-columns: repeat(2, 1fr); }
+  .gallery-wrap { grid-template-columns: repeat(2, 1fr); }
+  .gallery-expanded { grid-template-columns: repeat(2, 1fr); grid-template-columns: subgrid; }
 
   .contact-grid { grid-template-columns: 1fr; gap: 48px; }
 
@@ -1511,10 +1789,8 @@ ul { list-style: none; }
   .service-card { flex: 0 0 100%; padding: 28px 24px; }
 
   /* GALERIJA */
-  .gallery-wrap { padding: 0 16px; }
-  .gallery-preview { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 180px; gap: 8px; }
-  .gallery-expanded { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .gallery-item--natural { height: 190px; }
+  .gallery-wrap { padding: 0 16px; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .gallery-expanded { grid-template-columns: repeat(2, 1fr); grid-template-columns: subgrid; row-gap: 8px; }
 
   /* TESTIMONIALI */
   .section-header { margin-bottom: 40px; }
@@ -1562,9 +1838,8 @@ ul { list-style: none; }
   .service-icon { width: 40px; height: 40px; margin-bottom: 18px; }
 
   /* GALERIJA */
-  .gallery-preview { grid-auto-rows: 155px; gap: 6px; }
-  .gallery-expanded { gap: 6px; }
-  .gallery-item--natural { height: 160px; }
+  .gallery-wrap { gap: 6px; }
+  .gallery-expanded { row-gap: 6px; }
   .gallery-toggle { padding: 12px 24px; font-size: 0.75rem; }
 
   /* TESTIMONIALI */
