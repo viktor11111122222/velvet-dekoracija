@@ -367,6 +367,7 @@ function showImage(index) {
 }
 
 let _scrollY = 0;
+let _lightboxReturnGallery = null;
 
 function lockScroll() {
   _scrollY = window.scrollY;
@@ -409,7 +410,14 @@ function openLightbox(index, customImages) {
 
 function closeLightbox() {
   lightbox.classList.remove('active');
-  unlockScroll();
+  if (_lightboxReturnGallery) {
+    const key = _lightboxReturnGallery;
+    _lightboxReturnGallery = null;
+    unlockScroll();
+    openSvcGallery(key);
+  } else {
+    unlockScroll();
+  }
 }
 
 function showPrev() {
@@ -723,82 +731,82 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // ---------- SERVICE GALLERY POPUP ----------
 const SERVICE_GALLERIES = {
   rodjendan: [
-    'public/rodjendan/1000013964.webp',
-    'public/rodjendan/1000042688_7b36413b-5972-4948-b939-81c48b7732dc.webp',
-    'public/rodjendan/1000043030_9780d123-4d7f-4914-99c1-4161ca8eb969.webp',
-    'public/rodjendan/20250511_135812.webp',
-    'public/rodjendan/20250511_140040.webp',
+    'public/rodjendan/Q58A0659.webp',
+    'public/rodjendan/Q58A0704.webp',
+    'public/rodjendan/DSCF5425_17d69a5f-22d4-4b43-9336-a1b8ef6128c4.webp',
     'public/rodjendan/20250815_144015.webp',
+    'public/rodjendan/1000043030_9780d123-4d7f-4914-99c1-4161ca8eb969.webp',
+    'public/rodjendan/1000042688_7b36413b-5972-4948-b939-81c48b7732dc.webp',
     'public/rodjendan/20251123_113042.webp',
     'public/rodjendan/DSCF2448_fadb048a-b7e3-404c-b303-beaed23d899b.webp',
-    'public/rodjendan/DSCF5425_17d69a5f-22d4-4b43-9336-a1b8ef6128c4.webp',
+    'public/rodjendan/20250511_135812.webp',
+    'public/rodjendan/20250511_140040.webp',
+    'public/rodjendan/1000013964.webp',
     'public/rodjendan/DSC_0943.webp',
     'public/rodjendan/DSC_0962_700f58bc-6891-410d-ac00-257c1b33c171.webp',
     'public/rodjendan/DSF-288_1333e887-0627-487f-b3c1-0cc0892fd35b.webp',
-    'public/rodjendan/Q58A0659.webp',
-    'public/rodjendan/Q58A0704.webp',
   ],
   punoletstvo: [
-    'public/punoletstvo/20250614_170553.webp',
-    'public/punoletstvo/20250815_182401.webp',
-    'public/punoletstvo/20250828_181126.webp',
-    'public/punoletstvo/20250906_182535.webp',
-    'public/punoletstvo/20250906_182626.webp',
-    'public/punoletstvo/20251010_175426.webp',
-    'public/punoletstvo/20251024_174632.webp',
-    'public/punoletstvo/20251024_174853.webp',
-    'public/punoletstvo/20251206_174244.webp',
-    'public/punoletstvo/IMG-9076f5454ba856e7edcce9f153a1a122-V.webp',
     'public/punoletstvo/IMG-90b596c2c76b2110dd893d8108065b54-V.webp',
+    'public/punoletstvo/20251024_174853.webp',
+    'public/punoletstvo/20250815_182401.webp',
+    'public/punoletstvo/IMG-9076f5454ba856e7edcce9f153a1a122-V.webp',
     'public/punoletstvo/IMG-ad0b4ceffc278815b159a9826e5f96bc-V.webp',
     'public/punoletstvo/JSC_0207.webp',
+    'public/punoletstvo/20250906_182626.webp',
     'public/punoletstvo/image4.webp',
+    'public/punoletstvo/20250828_181126.webp',
+    'public/punoletstvo/20250614_170553.webp',
+    'public/punoletstvo/20250906_182535.webp',
+    'public/punoletstvo/20251010_175426.webp',
+    'public/punoletstvo/20251024_174632.webp',
+    'public/punoletstvo/20251206_174244.webp',
   ],
   devojacko: [
-    'public/devojacko/20250119_165451.webp',
     'public/devojacko/20250214_182330.webp',
-    'public/devojacko/20260221_192748.webp',
-    'public/devojacko/BG_1508.webp',
-    'public/devojacko/IMG-48ac3021e0aaf2cc0d52195c625f991e-V.webp',
-    'public/devojacko/IMG-6b1ac34b47649e32f7ca93794aa8583b-V.webp',
     'public/devojacko/daVinci_005.webp',
     'public/devojacko/daVinci_014.webp',
+    'public/devojacko/IMG-6b1ac34b47649e32f7ca93794aa8583b-V.webp',
+    'public/devojacko/IMG-48ac3021e0aaf2cc0d52195c625f991e-V.webp',
+    'public/devojacko/20260221_192748.webp',
+    'public/devojacko/20250119_165451.webp',
+    'public/devojacko/BG_1508.webp',
   ],
   vencanje: [
+    'public/Venčanje 2/преузимање-36.webp',
+    'public/Venčanje 2/MAJ_3119_3dcf6789-d9bb-4af6-96a4-46915589c967.webp',
+    'public/Venčanje 2/SM__3416_0f374b87-f323-4671-96a2-84987100101b.webp',
+    'public/Venčanje 2/20240614_164901.webp',
+    'public/Venčanje 2/BG_1918.webp',
+    'public/Venčanje 2/PFactory_0604.webp',
+    'public/Venčanje 2/IMG_1856.webp',
+    'public/Venčanje 2/image00022.webp',
+    'public/Venčanje 2/20251025_140409.webp',
+    'public/Venčanje 2/IMG-ca5ee3557241d3ca7d196153651edd67-V.webp',
+    'public/Venčanje 2/IMG-8f3e49bc5f16ce9936541987244232ab-V.webp',
+    'public/Venčanje 2/SM__3438_c811e084-c315-4fb7-bb2a-f5b89a81e320.webp',
+    'public/Venčanje 2/IMG-c288bc8365e273e43d725832800d28e6-V.webp',
     'public/Venčanje 2/0344 MM_cinema_e9e48d0a-a4bf-4786-9296-57936c9525ec.webp',
     'public/Venčanje 2/1261-JAKIfoto.webp',
-    'public/Venčanje 2/20240614_164901.webp',
     'public/Venčanje 2/20241005_131528.webp',
-    'public/Venčanje 2/20251025_140409.webp',
     'public/Venčanje 2/428-JAKIfoto.webp',
-    'public/Venčanje 2/BG_1918.webp',
-    'public/Venčanje 2/IMG-8f3e49bc5f16ce9936541987244232ab-V.webp',
-    'public/Venčanje 2/IMG-c288bc8365e273e43d725832800d28e6-V.webp',
-    'public/Venčanje 2/IMG-ca5ee3557241d3ca7d196153651edd67-V.webp',
-    'public/Venčanje 2/IMG_1856.webp',
-    'public/Venčanje 2/MAJ_3119_3dcf6789-d9bb-4af6-96a4-46915589c967.webp',
-    'public/Venčanje 2/PFactory_0604.webp',
-    'public/Venčanje 2/SM__3416_0f374b87-f323-4671-96a2-84987100101b.webp',
-    'public/Venčanje 2/SM__3438_c811e084-c315-4fb7-bb2a-f5b89a81e320.webp',
-    'public/Venčanje 2/image00022.webp',
-    'public/Venčanje 2/преузимање-36.webp',
   ],
   korporativne: [
+    'public/Korporativne/20250517_132827.webp',
+    'public/Korporativne/daVinci_002.webp',
+    'public/Korporativne/c909e1f904ca233cacc463baaba2e154_6bd8a516-4be3-4956-b5d6-f65e5423f41b.webp',
+    'public/Korporativne/20240803_181717.webp',
+    'public/Korporativne/20250511_135738.webp',
+    'public/Korporativne/IMG_20250519_233312_166.webp',
     'public/Korporativne/1000043029_66eca2a5-567f-4159-9932-2d046519db85.webp',
     'public/Korporativne/1263-JAKIfoto.webp',
     'public/Korporativne/1763555669258754_424a5dd3-f7ae-43b3-ad56-78949fef6c8b.webp',
-    'public/Korporativne/20240803_181717.webp',
     'public/Korporativne/20250502_145022.webp',
-    'public/Korporativne/20250511_135738.webp',
     'public/Korporativne/20250517_124351.webp',
     'public/Korporativne/20250517_124552.webp',
     'public/Korporativne/20250517_132601.webp',
-    'public/Korporativne/20250517_132827.webp',
-    'public/Korporativne/IMG_20250519_233312_166.webp',
     'public/Korporativne/MAJ_3119_3dcf6789-d9bb-4af6-96a4-46915589c967.webp',
     'public/Korporativne/MAJ_3122_b2546894-b827-41b0-85ae-c57b4d8d4f50.webp',
-    'public/Korporativne/c909e1f904ca233cacc463baaba2e154_6bd8a516-4be3-4956-b5d6-f65e5423f41b.webp',
-    'public/Korporativne/daVinci_002.webp',
     'public/Korporativne/daVinci_014.webp',
     'public/Korporativne/image00010.webp',
   ],
@@ -854,7 +862,8 @@ function openSvcGallery(key) {
     img.loading = 'lazy';
     item.appendChild(img);
     item.addEventListener('click', () => {
-      closeSvcGallery(false);
+      _lightboxReturnGallery = key;
+      closeSvcGallery();
       openLightbox(i, customImages);
     });
     svcGalleryGrid.appendChild(item);
@@ -884,18 +893,16 @@ function updateScrollHint() {
 
 svcGalleryGrid.addEventListener('scroll', updateScrollHint, { passive: true });
 
-function closeSvcGallery(restoreScroll = true) {
+function closeSvcGallery() {
   svcGalleryEl.classList.remove('active');
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.left = '';
   document.body.style.right = '';
   document.body.style.overflow = '';
-  if (restoreScroll) {
-    document.documentElement.style.scrollBehavior = 'auto';
-    window.scrollTo(0, _svcScrollY);
-    document.documentElement.style.scrollBehavior = '';
-  }
+  document.documentElement.style.scrollBehavior = 'auto';
+  window.scrollTo(0, _svcScrollY);
+  document.documentElement.style.scrollBehavior = '';
 }
 
 svcGalleryClose.addEventListener('click', () => closeSvcGallery(true));
