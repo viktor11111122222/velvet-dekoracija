@@ -1849,9 +1849,7 @@ ul { list-style: none; }
   .navbar .nav-toggle span { background: rgba(255,255,255,0.9); }
   .navbar.scrolled .nav-toggle span { background: var(--clr-dark); }
 
-  /* HERO — isključi parallax, dugmad na punu širinu */
-  .hero-img { transform: none !important; }
-
+  /* HERO — dugmad na punu širinu */
   .hero-buttons { flex-direction: column; align-items: center; gap: 12px; }
   .hero-buttons .btn { width: 100%; max-width: 280px; justify-content: center; }
 
