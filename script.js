@@ -776,7 +776,7 @@ const SERVICE_GALLERIES = {
     'public/vencanje/preuzimanje-36.webp',
     'public/vencanje/MAJ_3119_3dcf6789-d9bb-4af6-96a4-46915589c967.webp',
     'public/vencanje/SM__3416_0f374b87-f323-4671-96a2-84987100101b.webp',
-    'public/vencanje/20240614_164901.webp',
+    'public/vencanje/20260404_145453.webp',
     'public/vencanje/BG_1918.webp',
     'public/vencanje/PFactory_0604.webp',
     'public/vencanje/IMG_1856.webp',
@@ -789,6 +789,7 @@ const SERVICE_GALLERIES = {
     'public/vencanje/0344 MM_cinema_e9e48d0a-a4bf-4786-9296-57936c9525ec.webp',
     'public/vencanje/1261-JAKIfoto.webp',
     'public/vencanje/20241005_131528.webp',
+    'public/vencanje/20240614_164901.webp',
     'public/vencanje/428-JAKIfoto.webp',
   ],
   korporativne: [
